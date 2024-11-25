@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>Gestão Ecommerce</title>
+  </head>
+  <body>
+    <div class="container-lista-navegacoes" id="navegacoes">
+      <ul>
+        <li class="item-lista-de-itens">
+          <a href="../Usuarios/index.html" class="container-botao">
+            <div class="container-botao-item">
+              <span class="icone"><i class="fa-solid fa-user"></i></span>
+              <span class="texto-item">Usuários</span>
+            </div>
+          </a>
+        </li>
+        <li class="item-lista-de-itens">
+          <a href="../Clientes/index.html" class="container-botao">
+            <div class="container-botao-item">
+              <span class="icone"><i class="fa-solid fa-users"></i></span>
+              <span class="texto-item">Clientes</span>
+            </div>
+          </a>
+        </li>
+        <li class="item-lista-de-itens">
+          <a href="../Fornecedores/index.html" class="container-botao">
+            <div class="container-botao-item">
+              <span class="icone"><i class="fa-solid fa-user-tie"></i></span>
+              <span class="texto-item">Fornecedores</span>
+            </div>
+          </a>
+        </li>
+      </ul>
+      <div class="container-sair">
+        <a href="../../index.html" class="container-botao">
+          <div class="container-botao-item">
+            <span class="icone"><i class="fa-solid fa-sign-out-alt"></i></span>
+            <span class="texto-item">Sair da conta</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="container-conteudo">
+      <header class="header-conteudo">
+        <span class="nome-usuario">Bem-vindo, Usuário</span>
+      </header>
+      <main class="quadro-conteudo">
+        <h1 class="titulo-conteudo">Fornecedores</h1>
+        <form
+          id="fornecedorForm"
+          action="pages/Usuarios/index.html"
+          method="GET"
+        >
+          <div class="container-input">
+            <label for="fornecedor">Nome:</label>
+            <input type="text" id="fornecedor" name="fornecedor" required />
+          </div>
+          <div class="container-input">
+            <label for="telefone">Telefone:</label>
+            <input type="number" id="telefone" name="telefone" required />
+          </div>
+          <div class="container-input">
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+          <div class="container-input">
+            <label for="cnpj">CNPJ:</label>
+            <input type="text" id="cnpj" name="cnpj" required />
+          </div>
+          <button type="submit" id="botao-salvar">Salvar</button>
+        </form>
+        <div class="tabela">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>E-mail</th>
+                <th>CNPJ</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+    <script>
+      const apiUrl = "http://localhost:8080/fornecedores";
+
+      async function listarFornecedores() {
+        try {
+          const response = await fetch(apiUrl);
+          if (!response.ok) throw response;
+          const fornecedores = await response.json();
+
+          const tbody = document.querySelector("table tbody");
+          tbody.innerHTML = "";
+
+          fornecedores.forEach((fornecedor) => {
+            const row = document.createElement("tr");
+
+            const tdFornecedor = document.createElement("td");
+            tdFornecedor.textContent = fornecedor.nome;
+            const tdTelefone = document.createElement("td");
+            tdTelefone.textContent = fornecedor.telefone;
+            const tdEmail = document.createElement("td");
+            tdEmail.textContent = fornecedor.email;
+            const tdCnpj = document.createElement("td");
+            tdCnpj.textContent = fornecedor.cnpj;
+
+            const tdAcoes = document.createElement("td");
+
+            const botaoEditar = document.createElement("button");
+            botaoEditar.className = "botao-editar";
+            botaoEditar.innerHTML = '<i class="fa-solid fa-edit"></i> Editar';
+            botaoEditar.onclick = () => editarFornecedor(fornecedor);
+            tdAcoes.appendChild(botaoEditar);
+
+            const botaoExcluir = document.createElement("button");
+            botaoExcluir.className = "botao-excluir";
+            botaoExcluir.innerHTML =
+              '<i class="fa-solid fa-trash"></i> Excluir';
+            botaoExcluir.onclick = () => excluirFornecedor(fornecedor.id);
+            tdAcoes.appendChild(botaoExcluir);
+
+            row.appendChild(tdFornecedor);
+            row.appendChild(tdTelefone);
+            row.appendChild(tdEmail);
+            row.appendChild(tdCnpj);
+            row.appendChild(tdAcoes);
+
+            tbody.appendChild(row);
+          });
+        } catch (error) {
+          if (error.json) {
+            const data = await error.json();
+            alert(`Erro ao listar fornecedores:\n${data.errors.join("\n")}`);
+          } else {
+            alert(`Erro ao listar fornecedores: ${error.message}`);
+          }
+        }
+      }
+
+      document
+        .getElementById("fornecedorForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          const fornecedorInput = document.getElementById("fornecedor");
+          const telefoneInput = document.getElementById("telefone");
+          const emailInput = document.getElementById("email");
+          const cnpjInput = document.getElementById("cnpj");
+
+          const fornecedor = {
+            nome: fornecedorInput.value,
+            telefone: telefoneInput.value,
+            email: emailInput.value,
+            cnpj: cnpjInput.value,
+          };
+
+          const id = fornecedorInput.dataset.id;
+
+          try {
+            let response;
+            if (id) {
+              response = await fetch(`${apiUrl}/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(fornecedor),
+              });
+              delete fornecedorInput.dataset.id;
+            } else {
+              response = await fetch(apiUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(fornecedor),
+              });
+            }
+
+            if (!response.ok) throw response;
+            listarFornecedores();
+            document.getElementById("fornecedorForm").reset();
+          } catch (error) {
+            if (error.json) {
+              const data = await error.json();
+              alert(`Erro ao salvar fornecedor:\n${data.errors.join("\n")}`);
+            } else {
+              alert(`Erro ao salvar fornecedor: ${error.message}`);
+            }
+          }
+        });
+
+      async function excluirFornecedor(id) {
+        try {
+          const response = await fetch(`${apiUrl}/${id}`, { method: "DELETE" });
+          if (!response.ok) throw response;
+          listarFornecedores();
+        } catch (error) {
+          if (error.json) {
+            const data = await error.json();
+            alert(`Erro ao excluir fornecedor:\n${data.errors.join("\n")}`);
+          } else {
+            alert(`Erro ao excluir fornecedor: ${error.message}`);
+          }
+        }
+      }
+
+      function editarFornecedor(fornecedor) {
+        const fornecedorInput = document.getElementById("fornecedor");
+        const telefoneInput = document.getElementById("telefone");
+        const emailInput = document.getElementById("email");
+        const cnpjInput = document.getElementById("cnpj");
+
+        fornecedorInput.value = fornecedor.nome;
+        telefoneInput.value = fornecedor.telefone;
+        emailInput.value = fornecedor.email;
+        cnpjInput.value = fornecedor.cnpj;
+        fornecedorInput.dataset.id = fornecedor.id;
+      }
+      window.onload = listarFornecedores;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>Gestão Ecommerce</title>
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="login-container_left">
+        <img
+          src="https://cdn.pixabay.com/photo/2020/08/02/09/45/jersey-5457183_1280.jpg"
+          alt="foto camisa futebol"
+          class="login-container_left_img"
+        />
+      </div>
+      <div class="login-container_right">
+        <form id="loginForm" action="pages/Usuarios/index.html" method="GET">
+          <h1 class="login-container_right_titulo">Gestão Ecommerce</h1>
+          <h2 class="login-container_right_subtitulo">Login</h2>
+          <div class="container-input">
+            <label for="usuario">Usuário:</label>
+            <input type="text" id="usuario" name="usuario" required />
+          </div>
+
+          <div class="container-input">
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" name="senha" required />
+          </div>
+
+          <button type="submit" id="confirmar">Entrar</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
